@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>اختبار الشخصية التفاعلي</title>
+    <style>
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .slider-group {
+            margin: 30px 0;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 10px 0;
+        }
+        input[type="range"] {
+            width: 300px;
+            margin: 0 10px;
+        }
+        .percentages {
+            display: flex;
+            justify-content: space-between;
+            color: #666;
+        }
+        .category-title {
+            background: #e8f4ff;
+            padding: 8px;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+        #shareBtn {
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- إضافة زر المشاركة -->
+        <button id="shareBtn">مشاركة النتائج</button>
+
+        <!-- انطوائي - منفتح -->
+        <div class="category-title">الانفتاحية</div>
+        <div class="slider-group">
+            <div class="slider-container">
+                <span>انطوائي</span>
+                <input type="range" min="0" max="100" value="56" class="slider" id="s1">
+                <span>منفتح</span>
+            </div>
+            <div class="percentages">
+                <span>56%</span>
+                <span>44%</span>
+            </div>
+        </div>
+
+        <!-- واقعي - بديهي -->
+        <div class="category-title">التفكير</div>
+        <div class="slider-group">
+            <div class="slider-container">
+                <span>واقعي</span>
+                <input type="range" min="0" max="100" value="59" class="slider" id="s2">
+                <span>بديهي</span>
+            </div>
+            <div class="percentages">
+                <span>59%</span>
+                <span>41%</span>
+            </div>
+        </div>
+
+        <!-- عاطفي - مفكر -->
+        <div class="category-title">اتخاذ القرار</div>
+        <div class="slider-group">
+            <div class="slider-container">
+                <span>عاطفي</span>
+                <input type="range" min="0" max="100" value="53" class="slider" id="s3">
+                <span>مفكر</span>
+            </div>
+            <div class="percentages">
+                <span>53%</span>
+                <span>47%</span>
+            </div>
+        </div>
+
+        <!-- استكشافي - مخطط -->
+        <div class="category-title">الأنشطة</div>
+        <div class="slider-group">
+            <div class="slider-container">
+                <span>استكشافي</span>
+                <input type="range" min="0" max="100" value="61" class="slider" id="s4">
+                <span>مخطط</span>
+            </div>
+            <div class="percentages">
+                <span>61%</span>
+                <span>39%</span>
+            </div>
+        </div>
+
+        <!-- مضطرب - واثق -->
+        <div class="category-title">الثقة</div>
+        <div class="slider-group">
+            <div class="slider-container">
+                <span>مضطرب</span>
+                <input type="range" min="0" max="100" value="45" class="slider" id="s5">
+                <span>واثق</span>
+            </div>
+            <div class="percentages">
+                <span>45%</span>
+                <span>55%</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // تحديث الرابط عند تغيير القيم
+        function updateURL() {
+            const params = new URLSearchParams();
+            document.querySelectorAll('.slider').forEach((slider, index) => {
+                params.set(`s${index+1}`, slider.value);
+            });
+            window.history.replaceState({}, '', `${location.pathname}?${params}`);
+        }
+
+        // قراءة القيم من الرابط عند التحميل
+        function loadFromURL() {
+            const params = new URLSearchParams(location.search);
+            document.querySelectorAll('.slider').forEach((slider, index) => {
+                const value = params.get(`s${index+1}`) || slider.value;
+                slider.value = value;
+                updatePercentages(slider);
+            });
+        }
+
+        // تحديث النسب المئوية
+        function updatePercentages(slider) {
+            const parentGroup = slider.closest('.slider-group');
+            const [leftSpan, rightSpan] = parentGroup.querySelectorAll('.percentages span');
+            leftSpan.textContent = `${slider.value}%`;
+            rightSpan.textContent = `${100 - slider.value}%`;
+        }
+
+        // أحداث المزحلقات
+        document.querySelectorAll('.slider').forEach(slider => {
+            slider.addEventListener('input', function() {
+                updatePercentages(this);
+                updateURL();
+            });
+        });
+
+        // زر المشاركة
+        document.getElementById('shareBtn').addEventListener('click', () => {
+            navigator.clipboard.writeText(window.location.href)
+                .then(() => alert('تم نسخ الرابط! شاركه الآن مع أصدقائك'));
+        });
+
+        // التحميل الأولي
+        loadFromURL();
+    </script>
+</body>
+</html>
